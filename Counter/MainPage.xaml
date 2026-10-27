@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Counter.ViewModels"
+             xmlns:models="clr-namespace:Counter.Models"
+             x:Class="Counter.MainPage"
+             x:DataType="viewmodels:MainViewModel"
+             Title="Liczniki"
+             BackgroundColor="#F5F7FA">
+
+    <Grid RowDefinitions="Auto, *" Padding="16" RowSpacing="16">
+
+        <Border Grid.Row="0"
+                Stroke="#E0E4EC"
+                StrokeThickness="1"
+                BackgroundColor="White"
+                Padding="16"
+                StrokeShape="RoundRectangle 14">
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Nowy licznik"
+                       FontAttributes="Bold"
+                       FontSize="18"
+                       TextColor="#1A1C1E" />
+
+                <Grid ColumnDefinitions="*, 130" ColumnSpacing="10">
+                    <Entry Grid.Column="0"
+                           Placeholder="Nazwa (np. Szklanki wody)"
+                           Text="{Binding NewName}"
+                           MaxLength="64"
+                           TextColor="#1A1C1E" />
+                    <Entry Grid.Column="1"
+                           Placeholder="Start (0)"
+                           Keyboard="Numeric"
+                           Text="{Binding NewInitialValueText}"
+                           TextColor="#1A1C1E" />
+                </Grid>
+
+                <VerticalStackLayout Spacing="6">
+                    <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                        <Label Text="Kolor kafelka:"
+                               FontSize="13"
+                               TextColor="#5F6368"
+                               VerticalOptions="Center" />
+                        <Border WidthRequest="18"
+                                HeightRequest="18"
+                                BackgroundColor="{Binding SelectedColorHex}"
+                                StrokeShape="RoundRectangle 9"
+                                Stroke="#1A1C1E"
+                                StrokeThickness="1" />
+                        <Label Text="{Binding SelectedColorHex}"
+                               FontSize="12"
+                               TextColor="#5F6368"
+                               VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Spacing="10"
+                                           BindableLayout.ItemsSource="{Binding AvailableColors}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x:String">
+                                <Border WidthRequest="34"
+                                        HeightRequest="34"
+                                        BackgroundColor="{Binding .}"
+                                        StrokeShape="RoundRectangle 17"
+                                        Stroke="#33000000"
+                                        StrokeThickness="1">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=SelectColorCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding ValidationMessage}"
+                       TextColor="#D32F2F"
+                       FontSize="13"
+                       IsVisible="{Binding HasValidationError}" />
+
+                <Button Text="Utwórz licznik"
+                        Command="{Binding AddCounterCommand}"
+                        BackgroundColor="{Binding SelectedColorHex}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="10"
+                        HeightRequest="46" />
+            </VerticalStackLayout>
+        </Border>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Counters}"
+                        SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="16" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.EmptyView>
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="6"
+                                     Padding="24">
+                    <Label Text="Brak liczników"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           TextColor="#4A4E54" />
+                    <Label Text="Utwórz swój pierwszy licznik w formularzu powyżej."
+                           FontSize="14"
+                           HorizontalTextAlignment="Center"
+                           TextColor="#7A8089" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:CounterItem">
+                    <Border Margin="0,0,0,16"
+                            Padding="16"
+                            BackgroundColor="{Binding ColorHex}"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 16">
+                        <Grid RowDefinitions="Auto, Auto, Auto"
+                              ColumnDefinitions="*, Auto"
+                              RowSpacing="8">
+
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                <Label Text="{Binding Name}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="{Binding ContrastTextColor}"
+                                       LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding InitialValue, StringFormat='Wartość początkowa: {0}'}"
+                                       FontSize="12"
+                                       Opacity="0.85"
+                                       TextColor="{Binding ContrastTextColor}" />
+                            </VerticalStackLayout>
+
+                            <Button Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="✕"
+                                    FontSize="16"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    CornerRadius="20"
+                                    BackgroundColor="#33000000"
+                                    TextColor="White"
+                                    VerticalOptions="Start"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=DeleteCounterCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="{Binding CurrentValue}"
+                                   FontSize="40"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   TextColor="{Binding ContrastTextColor}" />
+
+                            <HorizontalStackLayout Grid.Row="1"
+                                                   Grid.Column="1"
+                                                   Spacing="10"
+                                                   VerticalOptions="Center">
+                                <Button Text="−"
+                                        FontSize="24"
+                                        FontAttributes="Bold"
+                                        WidthRequest="50"
+                                        HeightRequest="50"
+                                        CornerRadius="25"
+                                        BackgroundColor="White"
+                                        TextColor="#121212"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=DecrementCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Button Text="Reset"
+                                        FontSize="13"
+                                        FontAttributes="Bold"
+                                        WidthRequest="68"
+                                        HeightRequest="44"
+                                        CornerRadius="10"
+                                        BackgroundColor="#33000000"
+                                        TextColor="White"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=ResetCounterCommand}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Button Text="+"
+                                        FontSize="24"
+                                        FontAttributes="Bold"
+                                        WidthRequest="50"
+                                        HeightRequest="50"
+                                        CornerRadius="25"
+                                        BackgroundColor="White"
+                                        TextColor="#121212"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=IncrementCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
