@@ -35,10 +35,6 @@ public partial class MainPage : ContentPage
         UpdateState();
     }
 
-    /// <summary>
-    /// Dynamiczne dodawanie nowego licznika z nazwą, wartością początkową i wybranym kolorem.
-    /// Wartość początkową można nadać wyłącznie podczas tworzenia.
-    /// </summary>
     private async void OnAddCounterClicked(object? sender, EventArgs e)
     {
         string name = NameEntry.Text?.Trim() ?? string.Empty;
@@ -74,14 +70,10 @@ public partial class MainPage : ContentPage
         SaveCounters();
         UpdateState();
 
-        // Wyczyszczenie formularza
         NameEntry.Text = string.Empty;
         InitialValueEntry.Text = string.Empty;
     }
 
-    /// <summary>
-    /// Zwiększa wartość licznika o 1 i dokonuje auto-zapisu.
-    /// </summary>
     private void OnIncrementClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.BindingContext is Counter counter)
@@ -91,9 +83,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Zmniejsza wartość licznika o 1 i dokonuje auto-zapisu.
-    /// </summary>
     private void OnDecrementClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.BindingContext is Counter counter)
@@ -103,9 +92,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Resetuje licznik do wartości początkowej zdefiniowanej przy jego tworzeniu i dokonuje auto-zapisu.
-    /// </summary>
     private void OnResetClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.BindingContext is Counter counter)
@@ -115,9 +101,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Usuwa licznik z listy po potwierdzeniu przez użytkownika i zapisuje stan.
-    /// </summary>
     private async void OnDeleteCounterClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.BindingContext is Counter counter)
@@ -137,9 +120,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Personalizacja koloru istniejącego licznika (kolor jest również zapisywany i wczytywany).
-    /// </summary>
     private async void OnChangeColorClicked(object? sender, EventArgs e)
     {
         if (sender is Button btn && btn.BindingContext is Counter counter)
@@ -159,9 +139,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Podłącza zdarzenie PropertyChanged pod licznik, gwarantując auto-zapis po każdej zmianie wartości.
-    /// </summary>
     private void AttachCounterEvents(Counter counter)
     {
         counter.PropertyChanged += (s, e) =>
@@ -173,9 +150,6 @@ public partial class MainPage : ContentPage
         };
     }
 
-    /// <summary>
-    /// Zapisuje aktualną listę liczników w formacie JSON w folderze danych aplikacji.
-    /// </summary>
     private void SaveCounters()
     {
         try
@@ -196,10 +170,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    /// <summary>
-    /// Wczytuje stany liczników na starcie aplikacji z pliku JSON.
-    /// Jeśli plik nie istnieje (pierwsze uruchomienie), tworzy na sztywno jeden domyślny licznik (ocena dopuszczająca).
-    /// </summary>
     private void LoadCounters()
     {
         Counters.Clear();
@@ -226,7 +196,6 @@ public partial class MainPage : ContentPage
             }
         }
 
-        // Pierwsze uruchomienie aplikacji: jeden domyślny licznik (wymóg oceny dopuszczającej)
         var defaultCounter = new Counter
         {
             Name = "Główny licznik",
@@ -239,9 +208,6 @@ public partial class MainPage : ContentPage
         SaveCounters();
     }
 
-    /// <summary>
-    /// Aktualizuje etykietę licznika oraz widoczność informacji o pustej liście.
-    /// </summary>
     private void UpdateState()
     {
         EmptyStateLabel.IsVisible = Counters.Count == 0;
